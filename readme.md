@@ -110,6 +110,8 @@ pip install -r requirements.txt
 - `parameters/*` -> Inneholder også hemmelig nøkkel `key.pem`
 - `data/*` -> Denne mappen inneholder testbrukere hentet fra Digdirs liste: https://docs.digdir.no/docs/Kontaktregisteret/krr_testbrukere
 
-`krr_client.py` henter syntetiske brukere fra `data/synteticusers.xlsx` og deler dem opp i bolker for å simulere tilfeller hvor man overstiger KRRs begrensning på 1000 oppslag om gangen. 
+`client_singl_batch` henter `access_token` og gjør oppslag på én bolk syntetiske brukere fra `data/synteticusers.xlsx`. 
+
+`client_multipl_batches.py` henter syntetiske brukere fra `data/synteticusers.xlsx` og deler dem opp i bolker for å simulere tilfeller hvor man overstiger KRRs begrensning på 1000 oppslag om gangen. 
 
 Programmet generer egen `access_token` for hver bolk, og henter ut data. Data sammenstilles til slutt, og skrives til `data/data.xlsx`.

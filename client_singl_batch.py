@@ -6,7 +6,13 @@ import pem
 from jwcrypto import jwk, jwt
 from datetime import datetime, timezone
 import json
+import pandas as pd
 
+# les inn personene du skal gjøre oppslag på
+df = pd.read_excel('data/synteticusers.xlsx')  
+
+# konverter personnummer til liste
+persons = df['Fnr'].tolist()
 
 def readtxt(path):
     f = open(path)
@@ -86,7 +92,7 @@ lookup_header = {
 
 # Data/Payload
 loopup_body = {
-        'personidentifikatorer' : [ '20914695016' ],
+        'personidentifikatorer' : persons,
         'inkluderIkkeRegistrerte': False    
 }
 
