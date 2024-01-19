@@ -14,3 +14,5 @@ uuid==1.30
 wrapt==1.16.0
 zope.interface==6.1
 pem==0.3.0
+pandas==2.1.4
+openpyxl-3.1.2

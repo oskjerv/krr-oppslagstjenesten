@@ -70,7 +70,7 @@ body = {
 
 # Send forespørsel om token
 res = requests.post(maskinporten_token, data=body)
-print('Token request: ' + res)
+#print('Token request: ' + res)
 
 result = json.loads(res.text)
 token = result['access_token']
@@ -93,4 +93,4 @@ loopup_body = {
 # Gjør oppslag
 lookup_res = requests.post(lookup_endpoint, headers = lookup_header, json = loopup_body)
 
-print('Lookup request: ' + lookup_res)
+print(lookup_res.text)

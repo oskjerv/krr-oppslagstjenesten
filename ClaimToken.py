@@ -2,10 +2,9 @@
 import requests
 import uuid
 import os
+import json
 from jwcrypto import jwk, jwt
 from datetime import datetime, timezone
-import json
-
 
 class ClaimToken():
   
@@ -24,13 +23,17 @@ class ClaimToken():
 
     def get_parameters(self, dir):
         files = os.listdir(dir)
-
-        for file in files:
-            filename = file.removesuffix(".txt")
-            filename = filename.removesuffix(".pem")
-            f = open(dir + file)
-            string = f.read()
-            self.parameters[filename] = string
+        
+        if files == []:
+            print('\nDirectory is empty. Check readme.md and see what parameters/* should contain\n')
+        
+        else:
+            for file in files:
+                filename = file.removesuffix(".txt")
+                filename = filename.removesuffix(".pem")
+                f = open(dir + file)
+                string = f.read()
+                self.parameters[filename] = string
 
     def gen_jwk_key(self):
         if 'key' in self.parameters.keys():
@@ -41,7 +44,7 @@ class ClaimToken():
             print("\nPrivate key.pem not available. Run self.get_parameters() first, and check that .pem-file is available in parameters/ directory\n")
 
 
-    def gen_request(self):
+    def gen_token_request(self):
 
         """"
         The dictionary self.parameters should contain the keys
@@ -86,25 +89,13 @@ class ClaimToken():
         else:
             print('\nNot all parameters are available. self.parameters should contain consumer, integrationid, iss_onbehalfof, and kid.\n')
 
-    def make_request(self):
+    def request_token(self):
         if self.request_body:
             self.result = requests.post(self.maskinporten_token, data = self.request_body)
             result_dict = json.loads(self.result.text)
             self.access_token = result_dict['access_token']
         else:
-            print('\nThe request body is not ready. run self.gen_request first\n')
+            print('\nThe request body is not ready. run self.gen_token_request first\n')
 
 
     
-    
-
-
-claim = ClaimToken()
-claim.get_parameters("parameters/")
-claim.gen_jwk_key()
-
-claim.gen_request()
-claim.make_request()
-print(claim.result)
-print(claim.access_token)
-#print(claim.parameters)
