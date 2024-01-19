@@ -17,8 +17,6 @@ class Lookup(ClaimToken):
         self.result = None
         self.contact_info = None
         
-
-
     def gen_lookup_request(self, personidentificator):
         if self.access_token:
 
@@ -89,7 +87,7 @@ class Lookup(ClaimToken):
                     contact_info['timestamp'].append(self.timestamp)
 
                 self.contact_info = contact_info
-                print(pd.DataFrame.from_dict(self.contact_info))
+                #print(pd.DataFrame.from_dict(self.contact_info))
         else:
             print('\nNo resuls to. Did you remember to make the request?\n')
 
