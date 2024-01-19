@@ -38,7 +38,7 @@ for obj in objs:
 
 data = pd.concat(datalist)
 
-data.to_excel("result/data.xlsx")  
+data.to_excel("data/data.xlsx")  
 
 
 
