@@ -44,7 +44,7 @@ Digdirs guide: https://docs.digdir.no/docs/Kontaktregisteret/krr_opprette_klient
 - Difi-tjeneste: KRR.  
 - Scopes: Skal defineres automatisk, men for oppslag i KRR er det `krr:global/kontaktinformasjon.read` som er relevant.  
 - Hvis man er leverandør til kunde (databehandler og behandlingsansvarlig), skal kundens organisasjonsnummer legges til.  
-- Integrasjons identifikator: Genereres automatisk. Verdien skal brukes i `jwt_vlaims`.  
+- Integrasjons identifikator: Genereres automatisk. Verdien skal brukes i `jwt_claims`.  
 - Navn på integrasjon: Egendefinert, unikt navn på integrasjonen.  
 - Beskrivelse: Egendefinert beskrivelse av hva integrasjonen skal brukes til.  
 - Tillatte grant types: :`jwt-bearer`.  
@@ -81,6 +81,10 @@ Merk at OnBehalfOf-verdi må legges til i JWT-claim som et eget parameter.
 
 Den første forespørselen mot KRR, er en forespørsel om autentisering. Forespørselen skal generere et token.`ClaimToken.py` er eksempel på et slikt program. 
 
+### 2.3 Slå opp på testbrukere
+
+Token generert i 2.2 brukes deretter til å hente data fra KRRs API. `Lookup.py` er eksempel på et slikt program, som bygger videre på `ClaimToken.py`. 
+
 ## Kom i gang med koden
 
 Lag et virtuelt Python-miljø
@@ -98,10 +102,14 @@ Installer Python-pakker
 pip install -r requirements.txt
 ```
 
-- parameters/* -> directory med følgende `.txt`-filer: 
+- `parameters/*` -> directory med følgende `.txt`-filer: 
     * `consumer.txt`: Fil med kundens organisasjonsnummer
     * `integrationid.txt`: Fil med integrasjonsid fra integrasjon i Maskinporten
     * `iss_onbehalfof.txt`: Fil med iss_onbehalfof-ID fra integrasjon i Maskinporten
     * `kid.txt`: Fil med kid fra JWK-nøkkel lagt inn i integrasjonen i Maskinporten
-- parameters/* -> Inneholder også hemmelig nøkkel `key.pem`
+- `parameters/*` -> Inneholder også hemmelig nøkkel `key.pem`
+- `data/*` -> Denne mappen inneholder testbrukere hentet fra Digdirs liste: https://docs.digdir.no/docs/Kontaktregisteret/krr_testbrukere
 
+`krr_client.py` henter syntetiske brukere fra `data/synteticusers.xlsx` og deler dem opp i bolker for å simulere tilfeller hvor man overstiger KRRs begrensning på 1000 oppslag om gangen. 
+
+Programmet generer egen `access_token` for hver bolk, og henter ut data. Data sammenstilles til slutt, og skrives til `data/data.xlsx`.

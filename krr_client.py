@@ -3,7 +3,7 @@ from Lookup import Lookup
 import pandas as pd
 
 # les inn personene du skal gjøre oppslag på
-df = pd.read_excel('synteticusers.xlsx')  
+df = pd.read_excel('data/synteticusers.xlsx')  
 
 # konverter personnummer til liste
 persons = df['Fnr'].tolist()
