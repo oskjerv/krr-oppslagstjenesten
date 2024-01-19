@@ -87,6 +87,8 @@ Token generert i 2.2 brukes deretter til å hente data fra KRRs API. `Lookup.py`
 
 ## Kom i gang med koden
 
+Dette repoet har vært til stor hjelp: https://github.com/entur/exploratory-maskinporten-token/tree/main 
+
 Lag et virtuelt Python-miljø
 ```
 py -m venv .venv
