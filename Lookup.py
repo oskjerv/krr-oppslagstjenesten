@@ -3,7 +3,6 @@
 from ClaimToken import ClaimToken
 import requests
 import json
-import pandas as pd
 import collections
 
 class Lookup(ClaimToken):
