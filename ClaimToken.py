@@ -22,6 +22,10 @@ class ClaimToken():
         self.access_token = None
 
     def get_parameters(self, dir):
+        """
+        Method for collecting different parameters. Note that these are secret and 
+        specifically associcated with your integration in Maskinporten. 
+        """
         files = os.listdir(dir)
         
         if files == []:
@@ -36,6 +40,9 @@ class ClaimToken():
                 self.parameters[filename] = string
 
     def gen_jwk_key(self):
+        """
+        Method for generating a JWK-key, using the secret .pem
+        """
         if 'key' in self.parameters.keys():
             self.jwk_key = jwk.JWK.from_pem(
                 data = bytes(self.parameters['key'], 'ascii')
@@ -47,6 +54,8 @@ class ClaimToken():
     def gen_token_request(self):
 
         """"
+        Method for generating a request header and body for requesting an access token. 
+
         The dictionary self.parameters should contain the keys
         consumer, integrationid, iss_onbehalfof, and kid.
         """
@@ -90,10 +99,17 @@ class ClaimToken():
             print('\nNot all parameters are available. self.parameters should contain consumer, integrationid, iss_onbehalfof, and kid.\n')
 
     def request_token(self):
+        """
+        Method for executing the request for access token. 
+        """
         if self.request_body:
-            self.result = requests.post(self.maskinporten_token, data = self.request_body)
-            result_dict = json.loads(self.result.text)
-            self.access_token = result_dict['access_token']
+            try:
+                self.result = requests.post(self.maskinporten_token, data = self.request_body)
+                self.result.raise_for_status()
+                result_dict = json.loads(self.result.text)
+                self.access_token = result_dict['access_token']
+            except requests.exceptions.HTTPError as e:
+                return "Request for access token failed. Error: " + str(e)
         else:
             print('\nThe request body is not ready. run self.gen_token_request first\n')
 

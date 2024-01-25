@@ -15,14 +15,22 @@ class Lookup(ClaimToken):
         self.header = None
         self.result = None
         self.contact_info = None
+        self.persons = None
+        self.status_code = None
         
     def gen_lookup_request(self, personidentificator):
+        """
+        Method for compiling the request body and header, using the generated access token
+        and the batch of persons we want to lookup in the register.
+        """
         if self.access_token:
+            self.persons = personidentificator
 
             # Data/Payload
             self.body = {
                     'personidentifikatorer' : personidentificator,
-                    'inkluderIkkeRegistrerte': False    
+                    'inkluderIkkeRegistrerte': False,
+
             }
 
                 # Header i request
@@ -34,13 +42,21 @@ class Lookup(ClaimToken):
             print('\nYou need to collect acces_token first, with method request_token()\n')
 
     def make_request(self):
-        
+        """
+        Method for exeucuting the request, and if successfull adding the result as json
+        to self.result. 
+        """
         if self.body:
-            res = requests.post(self.endpoint, headers = self.header, json = self.body)
-            if res.status_code == 200:
+            try:
+                
+                res = requests.post(self.endpoint, headers = self.header, json = self.body)
+                res.raise_for_status()
+                self.status_code = res.status_code
                 self.result = json.loads(res.text)
-            else:
-                print('\nThe request failed with status code ' + str(res.status_code) +'\n')            
+                
+            except requests.exceptions.HTTPError as e:
+                return "Error: " + str(e)
+                                      
         else:            
             print('\nself.body and self.header has to be compiled using gen_lookup_request.\n')
 
@@ -49,18 +65,21 @@ class Lookup(ClaimToken):
             contact_info = collections.defaultdict(list)
             if 'personer' in self.result.keys():
                 
-                # Collect data for all persons in the result
+                # Collect data for all persons in the result 
                 # Not all attributes are available for all persons
+
                 for person in self.result['personer']:
                     #print(self.result['personer'])
+                    #if person['varslingsstatus'] == "KAN_VARSLES":
+
                     contact_info['fnr'].append(person['personidentifikator'])
                     contact_info['status'].append(person['status'])
                     contact_info['varslingsstatus'].append(person['varslingsstatus'])
 
                     if 'reservasjon' in person.keys():
-                        contact_info['reservasjon'].append(person['varslingsstatus'])
+                        contact_info['reservasjon'].append(person['reservasjon'])
                     else:
-                        contact_info['reservasjon'].append(person['varslingsstatus'])
+                        contact_info['reservasjon'].append(None)
 
                     if 'kontaktinformasjon' in person.keys():
                         
@@ -82,13 +101,36 @@ class Lookup(ClaimToken):
                     else:
                         contact_info['spraak'].append(None)
 
-                    #contact_info['access_token'].append(self.access_token)
                     contact_info['timestamp'].append(self.timestamp)
 
                 self.contact_info = contact_info
-                #print(pd.DataFrame.from_dict(self.contact_info))
+
         else:
             print('\nNo resuls to. Did you remember to make the request?\n')
+
+    def tally_persons(self):
+        """"
+        Method for tallying who data has been collected for, and for whom the request failed
+        If self.contact_info still is None, it has not been collected data on the persons in self.persons.
+        The persons are appended to nolookupmade.txt
+
+        If self.contact_info is not None, check if all persons in self.persons are present in the dictionary. 
+        If not, append the person to nodata.txt.
+        """
+        if self.contact_info:
+            for person in self.persons:
+                if str(person) in self.contact_info['fnr']:
+                    pass
+                else:
+                    with open('nodata.txt', 'a') as f:
+                        f.write(f"{person}\n") 
+        else:
+            with open('nolookupmade.txt', 'a') as f:
+                    for persons in self.persons:
+                        f.write(f"{persons}\n") 
+        
+
+                 
 
 
     

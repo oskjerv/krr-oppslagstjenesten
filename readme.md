@@ -23,7 +23,9 @@ Gå til samarbeid.digdir.no for å opprette en bruker. I forkant må Digdir oppr
 
 ### 1.5 Virksomhetssertifikat/nøkler
 
-Istedet for å bestille virksomhetssertifikat via Buypass eller Comfides, kan man også opprette egne private nøkler. 
+Istedet for å bestille virksomhetssertifikat via Buypass eller Comfides, kan man også opprette egne private nøkler.
+
+Merk at et virksomhetssertifikat fra Buypass eller Comfides er gyldig i tre år. Egne private nøkler er gyldige i ett år. 
 
 Man kan enten benytte https://mkjwk.org/ for å generere nøkler (disclaimer: her må man anta at nettsiden ikke misbruker/lagrer nøkkelparet du genererer). Det er også mulig å benytte openssl lokalt.
 
