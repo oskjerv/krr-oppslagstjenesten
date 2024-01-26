@@ -14,6 +14,7 @@ class Lookup(ClaimToken):
         self.body = None
         self.header = None
         self.result = None
+        self.json = None
         self.contact_info = None
         self.persons = None
         self.status_code = None
@@ -49,26 +50,41 @@ class Lookup(ClaimToken):
         if self.body:
             try:
                 
-                res = requests.post(self.endpoint, headers = self.header, json = self.body)
-                res.raise_for_status()
-                self.status_code = res.status_code
-                self.result = json.loads(res.text)
+                self.result = requests.post(self.endpoint, headers = self.header, json = self.body)
+                self.status_code = self.result.status_code
+                self.result.raise_for_status()
+            
+                 
+            except requests.exceptions.RequestException as e:
                 
-            except requests.exceptions.HTTPError as e:
                 return "Error: " + str(e)
                                       
         else:            
             print('\nself.body and self.header has to be compiled using gen_lookup_request.\n')
 
+    def load_json(self):
+        """"
+        Load the result text as json if it exists. 
+        If it doesnt (when status code is not 200), append the error
+        to a .txt-file.
+        """
+        if self.status_code == 200:
+                self.json = json.loads(self.result.text)
+        else:
+            with open('errors.txt', 'a') as f:
+                f.write(f"{self.result.text}\n") 
+
+               
+
     def structure_result(self):
-        if self.result:
+        if self.json:
             contact_info = collections.defaultdict(list)
-            if 'personer' in self.result.keys():
+            if 'personer' in self.json.keys():
                 
                 # Collect data for all persons in the result 
                 # Not all attributes are available for all persons
 
-                for person in self.result['personer']:
+                for person in self.json['personer']:
                     #print(self.result['personer'])
                     #if person['varslingsstatus'] == "KAN_VARSLES":
 
@@ -117,6 +133,7 @@ class Lookup(ClaimToken):
         If self.contact_info is not None, check if all persons in self.persons are present in the dictionary. 
         If not, append the person to nodata.txt.
         """
+
         if self.contact_info:
             for person in self.persons:
                 if str(person) in self.contact_info['fnr']:

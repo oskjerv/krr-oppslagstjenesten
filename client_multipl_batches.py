@@ -8,7 +8,7 @@ df = pd.read_excel('data/synteticusers.xlsx')
 # konverter personnummer til liste
 persons = df['Fnr'].tolist()
 
-persons += ['99999999999']
+#persons += ['99999999999']
 
 # funksjon for å dele opp liste i n nøstede lister
 def slice_per(source, step):
@@ -35,19 +35,14 @@ for obj in objs:
     obj.request_token()
     obj.gen_lookup_request(sliced_persons[counter])
     obj.make_request()
+    obj.load_json()
     #print(obj.result)
     if obj.status_code == 200:
         obj.structure_result()
-        datalist.append(pd.DataFrame.from_dict(obj.contact_info))
-
-
+        data = pd.DataFrame.from_dict(obj.contact_info)
+        data.to_excel("data/lookup_" + str(counter) + ".xlsx") 
     obj.tally_persons()
 
-        
-
-data = pd.concat(datalist)
-
-data.to_excel("data/data.xlsx")  
 
 
 
