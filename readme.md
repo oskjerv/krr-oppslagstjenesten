@@ -119,3 +119,7 @@ pip install -r requirements.txt
 `client_multipl_batches.py` henter syntetiske brukere fra `data/synteticusers.xlsx` og deler dem opp i bolker for å simulere tilfeller hvor man overstiger KRRs begrensning på 1000 oppslag om gangen. 
 
 Programmet generer egen `access_token` for hver bolk, og henter ut data. Data sammenstilles til slutt, og skrives til `data/data.xlsx`.
+
+Hvis enkelte bolker feiler, eller det ikke hentes på enkelte fødselsnummer, så skrives det til `data/`. Eventuelle feilmeldinger i response skrives også til samme mappe. 
+
+Koden bør forbedres, særlig ved større oppslag. Særlig med `try-exception` håndtering i `make_request`.
