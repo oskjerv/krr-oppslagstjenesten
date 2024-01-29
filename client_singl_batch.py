@@ -9,7 +9,7 @@ import json
 import pandas as pd
 
 # les inn personene du skal gjøre oppslag på
-df = pd.read_excel('data/synteticusers.xlsx')  
+df = pd.read_excel('data/synteticusers.xlsx', dtype = str)  
 
 # konverter personnummer til liste
 persons = df['Fnr'].tolist()
