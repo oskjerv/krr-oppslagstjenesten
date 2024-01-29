@@ -71,7 +71,7 @@ class Lookup(ClaimToken):
         if self.status_code == 200:
                 self.json = json.loads(self.result.text)
         else:
-            with open('errors.txt', 'a') as f:
+            with open('data/errors.txt', 'a') as f:
                 f.write(f"{self.result.text}\n") 
 
                
@@ -139,10 +139,10 @@ class Lookup(ClaimToken):
                 if str(person) in self.contact_info['fnr']:
                     pass
                 else:
-                    with open('nodata.txt', 'a') as f:
+                    with open('data/nodata.txt', 'a') as f:
                         f.write(f"{person}\n") 
         else:
-            with open('nolookupmade.txt', 'a') as f:
+            with open('data/nolookupmade.txt', 'a') as f:
                     for persons in self.persons:
                         f.write(f"{persons}\n") 
         

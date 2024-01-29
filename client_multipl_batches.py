@@ -1,6 +1,7 @@
 
 from Lookup import Lookup
 import pandas as pd
+import time
 
 # les inn personene du skal gjøre oppslag på
 df = pd.read_excel('data/synteticusers.xlsx')  
@@ -18,17 +19,19 @@ def slice_per(source, step):
 sliced_persons = slice_per(persons, 5) 
 
 
-objs = [Lookup() for i in range(len(sliced_persons))]
+# Hvis programmet må kjøres på nytt, på grunn av avbrudd. 
+# Sett en verdi for å fortsette fra bolk X.
+continuevalue = -1
 
-counter = -1
+objs = [Lookup() for i in range(len(sliced_persons)- continuevalue)]
 
-collected = dict()
+counter = continuevalue
 
-datalist = []
+sleep = 5
 
 for obj in objs:
     counter += 1
-    print('\nLookup number:' + str(counter))
+    print('\nLookup number: ' + str(counter))
     obj.get_parameters("parameters/")
     obj.gen_jwk_key()
     obj.gen_token_request()
@@ -42,6 +45,9 @@ for obj in objs:
         data = pd.DataFrame.from_dict(obj.contact_info)
         data.to_excel("data/lookup_" + str(counter) + ".xlsx") 
     obj.tally_persons()
+
+    print("Pausing for 5 seconds...")
+    time.sleep(sleep)
 
 
 
